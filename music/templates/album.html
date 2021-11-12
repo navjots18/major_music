@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
+		
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js" integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1" crossorigin="anonymous"></script>
+	<title>{{album_pg.title}}</title>
+	<style>
+			img {
+				max-width:100%;
+			}
+			h5 {
+				color:#4d9900;
+			}
+			input.btn{
+		background-color:#66cc00;
+	}
+		</style>
+	</head>
+	<body>
+		<div class="container-fluid">
+				<div class="row justify-content-start">
+					<div class = "col-4">
+						<p><a class = "text-success" href="/"> <h4> Home </h4></a></p>
+					</div>
+				</div>
+			</div>
+		<div class="container-fluid">
+				<div class="row justify-content-start">
+					<div class = "col-4">
+						<p><a class = "text-info" href="/search/"> <p> New Search </p></a></p>
+					</div>
+				</div>
+			</div>
+			<div class="container-fluid">
+				<div class="media">
+					<div class="media-left">
+						<a href="#">
+		<img src="{{album_pg.image}}" width = 300/>
+		<p></p>
+						</a>
+					</div>
+		<div class="media-body">
+						<div class="col col-md-auto">
+		<h2 class="media-heading">{{album_pg.title}}</h2>
+		<p>Type: {{album_pg.theType}}</p>
+		<h5>Artists: </h5>
+		{% for d in artist_pg %}
+		<p><a href="/artist/{{d.artistId}}">{{d.name}}{% if not forloop.last %},{% endif %}</a></p>
+		{% endfor %}
+		<h5>Release Date: </h5>
+		<p>{{album_pg.releaseDate}}</p>
+		<h5>Popularity: </h5>
+		<p>{{album_pg.popularity}}/100.0</p>
+		<h5>Tracks: </h5>
+		{% for m in musicData %}
+		<p>{{ forloop.counter }}. {# starting index 1 #} <a href="/song/{{m.songId}}">{{m.title}}</a></p>
+		{% endfor %}
+		<h5>Streaming: </h5>
+		<!--<p>{{tracks|join:"<br/>"}}</p> -->
+		<p>In order to access the album on Spotify, <a href="https://www.spotify.com/us/signup/" target="_blank">create a Spotify account</a> or <a href="https://accounts.spotify.com/en-US/login?continue=https:%2F%2Fwww.spotify.com%2Fus%2Faccount%2Foverview%2F" target="_blank">log in to your Spotify</a> if you have not done so already.</p>
+		<iframe src="https://open.spotify.com/embed?uri=spotify:album:{{album_pg.albumId}}" width="300" height="380" frameborder="0" allowtransparency="true"></iframe>
+		<p><a href="{{album_pg.external}}" target="_blank">Open on Spotify browser</a></p>
+		<p><a href="{{album_pg.uri}}" target="_blank">Open on Spotify</a></p>
+		<h5>Current rating: </h5>
+		{% if average.rating__avg == 'None' %}
+							<p>No average ratings yet</p>
+							{% else %}
+							<p>{{average.rating__avg}}/10.0</p>
+							{% endif %}
+							{% if theUser.is_authenticated %}
+		<p>Write a review, {{theUser.username}}.</p>
+		<form name="some" method = "GET" action="/album/{{album_pg.albumId}}">
+		<input class="form-control" type="text" name="review" value="Type review here">
+		<input class="form-control" type="text" name="number" value="number between 0-10">
+		<input type="submit" value="submit" class="btn btn-primary" name = "reviewed">
+		<p></p>
+		</form>
+		{% else %}
+		<p>To write a review, <a href="/register/">register</a> or <a href="/login/">login</a>.</p>
+		{% endif %}
+		<h5>Reviews: </h5>
+							{% if allReviews == 'nope' %}
+							<p>No reviews yet.</p>
+							{% else %}
+							{% for g in allReviews %}
+							<p>{{g.time}} (PST)</p>
+							<p>{{g.user}}: {{g.comment}}</p>
+							<p>Rating: {{g.rating}}/10.0</p>
+							{% endfor %}
+							{% endif %}
+							{% if theUser.is_authenticated %}
+<p><a href="/list_reviews/">My Reviews</a></p>
+{% endif %}
+							</div>
+					</div>
+
+				</div>
+			</div>
+	</body>
+</html>
